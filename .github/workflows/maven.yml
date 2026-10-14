@@ -1,6 +1,7 @@
+Agar aapko yehi same steps GitHub Actions me chalane hain, toh GitHub Actions YAML format use karta hai. Aapko apne repository me .github/workflows/build.yml file ke andar ye code rakhna hoga:
 
-
-name: Java CI with Maven
+YAML
+name: Java CI/CD with Maven
 
 on:
   push:
@@ -10,19 +11,41 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
+    # 1. Code clone (Checkout step)
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Setup JDK (Since Maven requires Java)
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
         distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+        java-version: '21'
 
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    # 3. Setup specific Maven version (jaise aapne Jenkins me 3.9.10 diya tha)
+    - name: Set up Maven
+      uses: stCarver/setup-maven@v5
+      with:
+        maven-version: '3.9.10'
+
+    # 4. Build the dev code
+    - name: Build with Maven
+      run: mvn clean install
+
+    # 5. Archive Test Reports & Artifacts (Post success step ke equivalent)
+    - name: Upload Test Reports
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: surefire-reports
+        path: '**/target/surefire-reports/TEST-*.xml'
+
+    - name: Upload JAR Artifact
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-jar
+        path: target/*.jar
