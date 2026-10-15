@@ -1,6 +1,3 @@
-Agar aapko yehi same steps GitHub Actions me chalane hain, toh GitHub Actions YAML format use karta hai. Aapko apne repository me .github/workflows/build.yml file ke andar ye code rakhna hoga:
-
-YAML
 name: Java CI/CD with Maven
 
 on:
@@ -25,7 +22,7 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    # 3. Setup specific Maven version (jaise aapne Jenkins me 3.9.10 diya tha)
+    # 3. Setup specific Maven version
     - name: Set up Maven
       uses: stCarver/setup-maven@v5
       with:
@@ -35,7 +32,7 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    # 5. Archive Test Reports & Artifacts (Post success step ke equivalent)
+    # 5. Archive Test Reports & Artifacts
     - name: Upload Test Reports
       if: success()
       uses: actions/upload-artifact@v4
