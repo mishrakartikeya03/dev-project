@@ -22,4 +22,9 @@ public class DevProjectApplication {
 	public String inbox() {
 	return "<h1> This is inbox module </h1>";
 	}
+   @GetMapping("/email")
+	public String email() {
+	return "<h1> This is email module </h1>";
+	}
+   
 }
